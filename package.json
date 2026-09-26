@@ -1,0 +1,104 @@
+{
+  "name": "panewell",
+  "productName": "Panewell",
+  "version": "1.0.0",
+  "description": "A borderless browser where fullscreen fills the window, not your whole monitor.",
+  "main": "src/main.js",
+  "author": {
+    "name": "Oscar Developments LLC",
+    "email": "oscardevelopmentsllc@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Oscar-Developments-LLC/panewell",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Oscar-Developments-LLC/panewell.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "https://github.com/castlabs/electron-releases#v43.5.0+wvcus",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.oscardevelopments.panewell",
+    "productName": "Panewell",
+    "copyright": "Copyright (c) 2026 Oscar Developments LLC",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "electronDownload": {
+      "mirror": "https://github.com/castlabs/electron-releases/releases/download/v"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-win-${arch}-setup.${ext}",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-win-${arch}-portable.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.utilities",
+      "artifactName": "${productName}-${version}-mac-${arch}.${ext}",
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "maintainer": "Oscar Developments LLC <oscardevelopmentsllc@gmail.com>",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Network",
+      "artifactName": "${productName}-${version}-linux-${arch}.${ext}",
+      "icon": "build/icons"
+    },
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    }
+  }
+}
