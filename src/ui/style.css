@@ -1,0 +1,284 @@
+/* Panewell chrome UI.
+   Total height here must match CHROME_HEIGHT in src/main.js (84px):
+   44px tab row + 40px nav row. */
+
+:root {
+  --chrome-height: 84px;
+  --tabbar-height: 44px;
+  --navbar-height: 40px;
+
+  --bg: #f3f3f5;
+  --bg-elevated: #ffffff;
+  --bg-sunken: #e6e6ea;
+  --fg: #1b1b1f;
+  --fg-muted: #61616b;
+  --border: #d5d5dc;
+  --accent: #2f6df6;
+  --danger: #e5484d;
+  --hover: rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101012;
+    --bg-elevated: #1c1c20;
+    --bg-sunken: #0a0a0c;
+    --fg: #ececf0;
+    --fg-muted: #9a9aa4;
+    --border: #2c2c33;
+    --accent: #5b8dff;
+    --danger: #ff6369;
+    --hover: rgba(255, 255, 255, 0.08);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: var(--chrome-height);
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  cursor: default;
+}
+
+/* ---------------------------------------------------------------- tab bar */
+
+.tabbar {
+  display: flex;
+  align-items: flex-end;
+  height: var(--tabbar-height);
+  padding: 6px 6px 0 6px;
+  gap: 2px;
+  background: var(--bg);
+  /* Everything in this row is draggable by default; interactive bits
+     opt out with -webkit-app-region: no-drag below. */
+  -webkit-app-region: drag;
+}
+
+.tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tab {
+  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 8px 0 10px;
+  min-width: 44px;
+  max-width: 200px;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: default;
+  transition: background 0.12s ease;
+}
+
+.tab:hover { background: var(--hover); }
+
+.tab.active {
+  background: var(--bg-elevated);
+  color: var(--fg);
+  box-shadow: 0 -1px 0 var(--border) inset, 1px 0 0 var(--border) inset,
+              -1px 0 0 var(--border) inset;
+}
+
+.tab .favicon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  border-radius: 3px;
+  object-fit: contain;
+}
+
+.tab .favicon.placeholder {
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+}
+
+.tab .spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.tab .title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12.5px;
+}
+
+.tab .close {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  cursor: default;
+}
+
+.tab .close:hover { background: var(--hover); opacity: 1; }
+.tab .close svg { width: 10px; height: 10px; }
+
+.drag-space { flex: 1 1 auto; min-width: 12px; height: 100%; }
+
+/* ------------------------------------------------------------- nav bar */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--navbar-height);
+  padding: 0 8px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.address-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  margin: 0 4px;
+}
+
+.address-icon {
+  position: absolute;
+  left: 9px;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--fg-muted);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+#address {
+  -webkit-app-region: no-drag;
+  width: 100%;
+  height: 28px;
+  padding: 0 12px 0 28px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-sunken);
+  color: var(--fg);
+  font: inherit;
+  user-select: text;
+  cursor: text;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+#address:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  background: var(--bg-elevated);
+}
+
+#address::placeholder { color: var(--fg-muted); }
+
+/* -------------------------------------------------------------- buttons */
+
+.icon-btn, .win-btn {
+  -webkit-app-region: no-drag;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 28px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--fg);
+  cursor: default;
+  transition: background 0.12s ease;
+}
+
+.icon-btn:hover:not(:disabled), .win-btn:hover { background: var(--hover); }
+.icon-btn:disabled { opacity: 0.35; }
+.win-btn.danger:hover { background: var(--danger); color: #fff; }
+
+.icon-btn svg, .win-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.newtab { align-self: center; margin-bottom: 4px; }
+
+.window-controls { display: flex; gap: 2px; align-self: center; margin-bottom: 4px; }
+
+/* ----------------------------------------------------------------- hint */
+
+.hint {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 10;
+}
+
+.hint[hidden] { display: none; }
+
+.hint-inner {
+  max-width: 460px;
+  margin: 0 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.hint-inner strong { display: block; margin-bottom: 8px; font-size: 14px; }
+.hint-inner ul { margin: 0 0 12px; padding-left: 18px; color: var(--fg-muted); }
+.hint-inner li { margin-bottom: 5px; }
+
+.hint-inner kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-sunken);
+  font: inherit;
+  font-size: 11.5px;
+}
+
+#hintClose {
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  cursor: default;
+}

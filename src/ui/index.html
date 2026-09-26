@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data: https: http:; style-src 'self' 'unsafe-inline'" />
+  <title>Panewell</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Tab strip. The empty space in this row is the drag handle for the
+       whole window, since there is no OS title bar. -->
+  <div class="tabbar" id="tabbar">
+    <div class="tabs" id="tabs"></div>
+
+    <button class="icon-btn newtab" id="newTab" title="New tab (Ctrl+T)" aria-label="New tab">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v9M3.5 8h9"/></svg>
+    </button>
+
+    <div class="drag-space"></div>
+
+    <div class="window-controls">
+      <button class="win-btn" id="min" title="Minimize" aria-label="Minimize">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9"/></svg>
+      </button>
+      <button class="win-btn" id="max" title="Maximize" aria-label="Maximize">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="4" width="8" height="8" rx="1"/></svg>
+      </button>
+      <button class="win-btn danger" id="close" title="Close" aria-label="Close">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation row -->
+  <div class="navbar">
+    <button class="icon-btn" id="back" title="Back (Alt+Left)" aria-label="Back" disabled>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg>
+    </button>
+    <button class="icon-btn" id="forward" title="Forward (Alt+Right)" aria-label="Forward" disabled>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"/></svg>
+    </button>
+    <button class="icon-btn" id="reload" title="Reload (Ctrl+R)" aria-label="Reload">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M13 8a5 5 0 1 1-1.6-3.7"/>
+        <path d="M13 2.5V5.5H10"/>
+      </svg>
+    </button>
+
+    <div class="address-wrap">
+      <svg class="address-icon" viewBox="0 0 16 16" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.2"/>
+        <path d="M10.2 10.2L13.5 13.5"/>
+      </svg>
+      <input id="address" type="text" spellcheck="false"
+             placeholder="Search or enter a web address"
+             aria-label="Address and search bar" />
+    </div>
+
+    <button class="icon-btn" id="immersive" title="Fill window (F11)" aria-label="Fill window">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M6 2.5H2.5V6M10 2.5h3.5V6M6 13.5H2.5V10M10 13.5h3.5V10"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- First-run hint. Dismissed permanently once closed. -->
+  <div class="hint" id="hint" hidden>
+    <div class="hint-inner">
+      <strong>Welcome to Panewell</strong>
+      <ul>
+        <li>Drag the empty space next to the tabs to move the window.</li>
+        <li>Drag any edge or corner to resize.</li>
+        <li>Press <kbd>F11</kbd> or a site's own fullscreen button. Video fills
+            this window instead of taking over your screen.</li>
+      </ul>
+      <button id="hintClose">Got it</button>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
