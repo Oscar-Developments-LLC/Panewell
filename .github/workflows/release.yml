@@ -1,0 +1,93 @@
+name: Build and release
+
+# Runs when you push a version tag (git tag v1.0.0 && git push --tags),
+# or manually from the Actions tab.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows
+          - os: macos-latest
+            name: mac
+          - os: ubuntu-latest
+            name: linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Optional. Netflix and similar sites refuse to play in browsers that
+      # are not VMP-signed on Windows and macOS. Signing is free via
+      # castlabs EVS: https://github.com/castlabs/electron-releases/wiki/EVS
+      #
+      # To turn it on, add EVS_ACCOUNT_NAME and EVS_PASSWD as repository
+      # secrets (Settings > Secrets and variables > Actions). Without them
+      # this step is skipped and everything except DRM streaming works.
+      - name: Install castlabs EVS client
+        if: matrix.name != 'linux' && env.EVS_ACCOUNT_NAME != ''
+        env:
+          EVS_ACCOUNT_NAME: ${{ secrets.EVS_ACCOUNT_NAME }}
+        run: pip install --upgrade castlabs-evs
+
+      - name: Build
+        run: npx electron-builder --${{ matrix.name == 'mac' && 'mac' || matrix.name == 'windows' && 'win' || 'linux' }} --publish never
+        env:
+          # Skip code signing. Unsigned builds show an OS warning on first
+          # run, which is expected for a free open-source app.
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      # VMP-sign after packaging. Order matters: on macOS VMP signing must
+      # happen BEFORE code signing, on Windows AFTER. Since this project
+      # does not code-sign at all, signing here is safe on both.
+      - name: VMP sign for Widevine
+        if: matrix.name != 'linux' && env.EVS_ACCOUNT_NAME != ''
+        env:
+          EVS_ACCOUNT_NAME: ${{ secrets.EVS_ACCOUNT_NAME }}
+          EVS_PASSWD: ${{ secrets.EVS_PASSWD }}
+        run: python -m castlabs_evs.vmp sign-pkg -n dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: panewell-${{ matrix.name }}
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.AppImage
+            dist/*.deb
+          if-no-files-found: warn
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
