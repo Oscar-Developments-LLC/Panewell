@@ -172,14 +172,3 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
   }
 });
-
-// ----------------------------------------------------------- first run
-
-const HINT_KEY = 'panewell.hintSeen';
-if (!localStorage.getItem(HINT_KEY)) {
-  $('hint').hidden = false;
-  $('hintClose').addEventListener('click', () => {
-    $('hint').hidden = true;
-    localStorage.setItem(HINT_KEY, '1');
-  });
-}
