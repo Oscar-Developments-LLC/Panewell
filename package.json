@@ -1,7 +1,7 @@
 {
   "name": "panewell",
   "productName": "Panewell",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A borderless browser where fullscreen fills the window, not your whole monitor.",
   "main": "src/main.js",
   "author": {
